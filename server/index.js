@@ -16,7 +16,7 @@ import { initCollectionsSchema, getCollections, fetchAndStoreLogos } from './col
 import { fetchTvSaisonsAndStore } from './tmdb.js'
 
 const app = express()
-const db = new Database('movy.db')
+const db = new Database(process.env.DB_PATH || 'movy.db')
 const PORT = process.env.PORT || 3001
 
 db.pragma('journal_mode = WAL')
