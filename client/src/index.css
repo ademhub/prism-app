@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+button, a, [role="button"] { cursor: pointer; }
+
+/* ── SF Pro (installée localement) ───────────────────────────────────────── */
+@font-face {
+  font-family: 'SF Pro';
+  src: local('SF Pro Thin'),        url('/fonts/SF-Pro.ttf') format('truetype');
+  font-weight: 100;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: local('SF Pro Light'),       url('/fonts/SF-Pro.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: local('SF Pro'),             url('/fonts/SF-Pro.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: local('SF Pro Medium'),      url('/fonts/SF-Pro.ttf') format('truetype');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: local('SF Pro Semibold'),    url('/fonts/SF-Pro.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: local('SF Pro Heavy'),       url('/fonts/SF-Pro.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: local('SF Pro Heavy'),       url('/fonts/SF-Pro.ttf') format('truetype');
+  font-weight: 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: local('SF Pro'),             url('/fonts/SF-Pro.ttf') format('truetype');
+  font-weight: 900;
+  font-display: swap;
+}
+
+@theme {
+  --color-surface:   #000000;
+  --color-surface-2: #1C1C1C;
+  --color-accent:    #E50914;
+  --color-warm:      #EDEAE0;
+  --font-display:    'Bebas Neue', sans-serif;
+  --font-body:       'SF Pro', sans-serif;
+}
+
+body {
+  background-color: #000000;
+  color: #EDEAE0;
+  font-family: 'SF Pro', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Cache la scrollbar sur tout le site */
+html::-webkit-scrollbar { display: none; }
+html { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Scrollbar invisible mais fonctionnelle */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Animations ─────────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+@keyframes spinCCW {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+@keyframes posterScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.animate-fade-up   { animation: fadeUp   0.55s ease both; }
+.animate-fade-in   { animation: fadeIn   0.45s ease both; }
+.animate-slide-right { animation: slideRight 0.45s ease both; }
+.animate-scale-in  { animation: scaleIn  0.4s ease both; }
+
+/* Skeleton shimmer */
+.animate-shimmer {
+  background: linear-gradient(90deg, #16181F 25%, #1e2029 50%, #16181F 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}

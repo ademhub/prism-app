@@ -1,0 +1,27 @@
+{
+  "name": "movy-client",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.109.0",
+    "@videojs/react": "^10.0.0-beta.26",
+    "date-fns": "^4.4.0",
+    "framer-motion": "^13.0.0",
+    "hls.js": "^1.6.17",
+    "lucide-react": "^1.29.0",
+    "ogl": "^1.0.11",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "react-router-dom": "^7.18.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "tailwindcss": "^4.0.0",
+    "vite": "^6.0.0"
+  }
+}

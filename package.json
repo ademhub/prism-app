@@ -1,0 +1,13 @@
+{
+  "name": "movy",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n server,client -c cyan,magenta \"npm run dev --prefix server\" \"npm run dev --prefix client\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  },
+  "dependencies": {
+    "@iptv/xtream-api": "^1.4.1"
+  }
+}

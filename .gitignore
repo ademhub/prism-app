@@ -1,0 +1,28 @@
+node_modules/
+.env
+.env.local
+
+# Base de données SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Cache et logs serveur
+server/channels-cache/
+server/uploads/
+server/startup.log
+server/startup.err
+server/import-log.txt
+server/import-err.txt
+server/channels-cache.json
+
+# Fichiers debug
+server/debug-*.png
+server/test-*.png
+
+# Build frontend
+client/dist/
+
+# OS
+.DS_Store
+Thumbs.db
