@@ -244,6 +244,7 @@ async function enrichOneById(db, row, stmts, skipSaisons = false) {
       media_type:      mediaType,
       watch_providers: parseWatchProviders(watchData),
       saisons:         saisons ? JSON.stringify(saisons) : null,
+      is_adult:        details.adult ? 1 : 0,
     })
 
     stmts.deleteCast.run(row.id)
