@@ -52,6 +52,10 @@ export function initTmdbSchema(db) {
     ['media_type',      'TEXT'],
     ['watch_providers', 'TEXT'],
     ['saisons',         'TEXT'],
+    ['is_adult',           'INTEGER'],
+    ['collection_id',      'INTEGER'],
+    ['collection_name',    'TEXT'],
+    ['original_language',  'TEXT'],
   ]
 
   const existing = new Set(
@@ -89,7 +93,8 @@ const makeUpdateMedia = (db) =>
       media_type      = @media_type,
       watch_providers = @watch_providers,
       saisons         = @saisons,
-      is_adult        = @is_adult
+      is_adult           = @is_adult,
+      original_language  = @original_language
     WHERE id = @id
   `)
 
@@ -177,10 +182,11 @@ async function enrichOne(db, row, stmts) {
       genres,
       duree:           details.runtime,
       enriched_at:     new Date().toISOString(),
-      media_type:      'movie',
-      watch_providers: parseWatchProviders(watchData),
-      saisons:         null,
-      is_adult:        details.adult ? 1 : 0,
+      media_type:        'movie',
+      watch_providers:   parseWatchProviders(watchData),
+      saisons:           null,
+      is_adult:          details.adult ? 1 : 0,
+      original_language: details.original_language ?? null,
     })
 
     stmts.deleteCast.run(row.id)
@@ -238,9 +244,10 @@ async function enrichOneById(db, row, stmts, skipSaisons = false) {
       genres,
       duree,
       enriched_at:     new Date().toISOString(),
-      media_type:      mediaType,
-      watch_providers: parseWatchProviders(watchData),
-      saisons:         saisons ? JSON.stringify(saisons) : null,
+      media_type:        mediaType,
+      watch_providers:   parseWatchProviders(watchData),
+      saisons:           saisons ? JSON.stringify(saisons) : null,
+      original_language: details.original_language ?? null,
     })
 
     stmts.deleteCast.run(row.id)
@@ -367,7 +374,8 @@ export async function importFromTmdb(db, tmdbId, mediaType = 'movie') {
       media_type      = @media_type,
       watch_providers = @watch_providers,
       saisons         = @saisons,
-      is_adult        = @is_adult
+      is_adult          = @is_adult,
+      original_language = @original_language
     WHERE filepath = @filepath
   `)
   const stmtId      = db.prepare('SELECT id FROM media WHERE filepath = ?')
@@ -392,10 +400,11 @@ export async function importFromTmdb(db, tmdbId, mediaType = 'movie') {
       genres,
       duree,
       enriched_at:     new Date().toISOString(),
-      media_type:      mediaType,
-      watch_providers: parseWatchProviders(watchData),
-      saisons:         saisons ? JSON.stringify(saisons) : null,
-      is_adult:        details.adult ? 1 : 0,
+      media_type:        mediaType,
+      watch_providers:   parseWatchProviders(watchData),
+      saisons:           saisons ? JSON.stringify(saisons) : null,
+      is_adult:          details.adult ? 1 : 0,
+      original_language: details.original_language ?? null,
     })
 
     stmtDelCast.run(row.id)

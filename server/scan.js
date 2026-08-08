@@ -61,7 +61,22 @@ export function initSchema(db) {
       titre_brut    TEXT,
       annee_devinee INTEGER,
       type          TEXT,
-      source        TEXT NOT NULL DEFAULT 'local'
+      source        TEXT    NOT NULL DEFAULT 'local',
+      tmdb_id       INTEGER,
+      titre_officiel TEXT,
+      synopsis      TEXT,
+      poster_path   TEXT,
+      backdrop_path TEXT,
+      note          REAL,
+      genres        TEXT,
+      duree         INTEGER,
+      enriched_at   TEXT,
+      media_type    TEXT,
+      watch_providers TEXT,
+      collection_id INTEGER,
+      collection_name TEXT,
+      saisons       TEXT,
+      is_adult      INTEGER DEFAULT 0
     )
   `)
 }

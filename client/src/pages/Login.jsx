@@ -220,7 +220,7 @@ export default function Login() {
       >
         {/* Logo */}
         <div className="flex items-center gap-2.5 mb-8">
-          <img src="/logo-icon.svg?v=7" alt="" style={{ height: '26px', width: 'auto', display: 'block' }} />
+          <img src="/logo-icon-bold.svg?v=8" alt="" style={{ height: '26px', width: 'auto', display: 'block' }} />
           <span className="font-display text-2xl tracking-[0.22em] text-warm leading-none">PRISM</span>
         </div>
 

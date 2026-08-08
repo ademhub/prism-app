@@ -16,8 +16,10 @@ import { initCollectionsSchema, getCollections, fetchAndStoreLogos } from './col
 import { fetchTvSaisonsAndStore } from './tmdb.js'
 
 const app = express()
-const db = new Database('movy.db')
-const PORT = 3001
+const PORT = process.env.PORT || 3001
+const DB_PATH      = process.env.DB_PATH      || path.join(__dirname, 'movy.db')
+const UPLOADS_DIR  = process.env.UPLOADS_PATH || path.join(__dirname, 'uploads')
+const db = new Database(DB_PATH)
 
 db.pragma('journal_mode = WAL')
 db.pragma('cache_size = -32000')
@@ -111,11 +113,11 @@ db.exec(`
 `)
 
 app.use(express.json())
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+app.use('/uploads', express.static(UPLOADS_DIR))
 
 const avatarUpload = multer({
   storage: multer.diskStorage({
-    destination: path.join(__dirname, 'uploads/avatars'),
+    destination: path.join(UPLOADS_DIR, 'avatars'),
     filename: (req, file, cb) => {
       const ext = path.extname(file.originalname) || '.jpg'
       cb(null, `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`)
@@ -133,7 +135,8 @@ const avatarUpload = multer({
 const stmtList = db.prepare(`
   SELECT
     id, titre_officiel, titre_brut, poster_path, backdrop_path, note,
-    genres, annee_devinee, duree, type, source, enriched_at, media_type, tmdb_id
+    genres, annee_devinee, duree, type, source, enriched_at, media_type, tmdb_id,
+    original_language
   FROM media
   WHERE (enriched_at IS NOT NULL OR (tmdb_id IS NOT NULL AND poster_path IS NOT NULL))
     AND (titre_officiel IS NOT NULL OR titre_brut IS NOT NULL)
@@ -145,7 +148,8 @@ const stmtList = db.prepare(`
 const stmtSeries = db.prepare(`
   SELECT
     id, titre_officiel, titre_brut, poster_path, backdrop_path, note,
-    genres, annee_devinee, duree, type, source, enriched_at, media_type, tmdb_id
+    genres, annee_devinee, duree, type, source, enriched_at, media_type, tmdb_id,
+    original_language
   FROM media
   WHERE media_type = 'tv'
     AND poster_path IS NOT NULL
@@ -906,7 +910,7 @@ app.delete('/api/users/me', (req, res) => {
   // Supprime l'ancien avatar si existant
   const profile = db.prepare('SELECT avatar_url FROM profiles WHERE id = ?').get(userId)
   if (profile?.avatar_url?.startsWith('/uploads/')) {
-    const filePath = path.join(__dirname, profile.avatar_url)
+    const filePath = path.join(UPLOADS_DIR, '..', profile.avatar_url)
     try { fs.unlinkSync(filePath) } catch {}
   }
   db.prepare('DELETE FROM friendships WHERE requester_id = ? OR addressee_id = ?').run(userId, userId)
@@ -948,6 +952,14 @@ app.post('/api/notifications/read', (req, res) => {
   db.prepare(`UPDATE notifications SET read = 1 WHERE user_id = ?`).run(userId)
   res.json({ ok: true })
 })
+
+// ─── Serve client (production) ───────────────────────────────────────────────
+
+const clientDist = path.join(__dirname, '..', 'client', 'dist')
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist))
+  app.get('*', (req, res) => res.sendFile(path.join(clientDist, 'index.html')))
+}
 
 app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`)

@@ -20,7 +20,7 @@ export default function Actor() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <img src="/logo-icon.svg?v=4" alt="Prism" className="w-16 h-16 animate-pulse" />
+        <img src="/logo-icon-bold.svg?v=8" alt="Prism" className="w-16 h-16 animate-pulse" />
       </div>
     )
   }

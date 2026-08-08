@@ -46,7 +46,7 @@ export default function ProfileSelector() {
     <div className="min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center px-8">
       {/* Logo */}
       <div className="flex items-center gap-2.5 mb-16">
-        <img src="/logo-icon.svg?v=7" alt="" style={{ height: '22px', width: 'auto', display: 'block' }} />
+        <img src="/logo-icon-bold.svg?v=8" alt="" style={{ height: '22px', width: 'auto', display: 'block' }} />
         <span className="font-display text-xl tracking-[0.22em] text-warm leading-none">PRISM</span>
       </div>
 

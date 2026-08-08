@@ -403,7 +403,7 @@ export default function Onboarding() {
     <div className="min-h-screen bg-surface flex flex-col items-center justify-center px-5 py-12">
       {/* Logo */}
       <div className="flex items-center gap-2.5 mb-10">
-        <img src="/logo-icon.svg?v=7" alt="" style={{ height: '20px', width: 'auto' }} />
+        <img src="/logo-icon-bold.svg?v=8" alt="" style={{ height: '20px', width: 'auto' }} />
         <span className="font-display text-xl tracking-[0.22em] text-warm leading-none">PRISM</span>
       </div>
 

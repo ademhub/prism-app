@@ -22,6 +22,8 @@ const CURRENT_YEAR = new Date().getFullYear()
 
 // ── Top 10 curatés du moment ─────────────────────────────────────────────────
 
+const ASIAN_LANGS = new Set(['ja', 'ko', 'zh', 'cn', 'th'])
+
 const CURATED_TOP10 = [
   // The Odyssey (Nolan, 2026) — tmdb 1698863
   { label: 'The Odyssey',                               test: (t, m) => /^(the )?odyssey$/i.test(t) || /^(l')?odyssée?$/i.test(t) || m.tmdb_id === 1698863 },
@@ -31,8 +33,6 @@ const CURATED_TOP10 = [
   { label: 'Obsession',                                 test: (t)    => /^obsession$/i.test(t) },
   // Alien: Romulus (2024)
   { label: 'Alien: Romulus',                            test: (t)    => /romulus/i.test(t) },
-  // Kingdom of the Planet of the Apes (2024)
-  { label: 'La Planète des Singes : Le Nouveau Royaume', test: (t, m) => /kingdom of the planet/i.test(t) || /nouveau royaume/i.test(t) || m.tmdb_id === 653346 },
   // F1 (Brad Pitt, 2025) — tmdb 911430
   { label: 'F1',                                        test: (t, m) => m.tmdb_id === 911430 || (/^f1/i.test(t) && (m.annee_devinee ?? 0) >= 2025) },
   // Mission: Impossible – The Final Reckoning (2025)
@@ -57,30 +57,32 @@ function getCuratedTop10(list) {
   })
 }
 
+const isWestern = (m) => !ASIAN_LANGS.has(m.original_language)
+
 function getNewReleases(list) {
   return [...list]
-    .filter((m) => m.annee_devinee >= CURRENT_YEAR - 2 && m.poster_path && (m.titre_officiel || m.titre_brut))
+    .filter((m) => isWestern(m) && m.annee_devinee >= CURRENT_YEAR - 2 && m.poster_path && (m.titre_officiel || m.titre_brut))
     .sort((a, b) => (b.annee_devinee - a.annee_devinee) || (b.note - a.note))
     .slice(0, ROW_LIMIT)
 }
 
 function getEnCeMoment(list) {
   return [...list]
-    .filter((m) => m.annee_devinee >= 2024 && m.poster_path && (m.titre_officiel || m.titre_brut))
+    .filter((m) => isWestern(m) && m.annee_devinee >= 2024 && m.poster_path && (m.titre_officiel || m.titre_brut))
     .sort((a, b) => (b.annee_devinee - a.annee_devinee) || (b.note - a.note))
     .slice(0, ROW_LIMIT)
 }
 
 function getPopularSeries(list) {
   return [...list]
-    .filter((m) => m.media_type === 'tv' && m.poster_path && (m.titre_officiel || m.titre_brut))
+    .filter((m) => isWestern(m) && m.media_type === 'tv' && m.poster_path && (m.titre_officiel || m.titre_brut))
     .sort((a, b) => (b.note ?? 0) - (a.note ?? 0) || (b.annee_devinee ?? 0) - (a.annee_devinee ?? 0))
     .slice(0, ROW_LIMIT)
 }
 
 function getRecentSeries(list) {
   return [...list]
-    .filter((m) => m.media_type === 'tv' && m.poster_path && (m.titre_officiel || m.titre_brut) && m.annee_devinee >= 2022)
+    .filter((m) => isWestern(m) && m.media_type === 'tv' && m.poster_path && (m.titre_officiel || m.titre_brut) && m.annee_devinee >= 2022)
     .sort((a, b) => (b.annee_devinee ?? 0) - (a.annee_devinee ?? 0) || (b.note ?? 0) - (a.note ?? 0))
     .slice(0, ROW_LIMIT)
 }
@@ -88,6 +90,7 @@ function getRecentSeries(list) {
 function getFeatured(list) {
   return [...list]
     .filter((m) =>
+      isWestern(m) &&
       m.backdrop_path &&
       m.poster_path &&
       m.annee_devinee >= 2023 &&
@@ -103,7 +106,7 @@ function groupByGenre(list) {
   const seen = new Set()
 
   const sorted = [...list]
-    .filter((m) => m.poster_path && (m.titre_officiel || m.titre_brut))
+    .filter((m) => isWestern(m) && m.poster_path && (m.titre_officiel || m.titre_brut))
     .sort((a, b) => {
       const yearDiff = (b.annee_devinee ?? 0) - (a.annee_devinee ?? 0)
       if (yearDiff !== 0) return yearDiff
@@ -185,7 +188,7 @@ function HeroSection() {
       >
         <div className="absolute top-0 inset-x-0 z-10 pt-10 text-center pointer-events-none select-none">
           <div className="flex items-center justify-center gap-3">
-            <img src="/logo-icon.svg?v=6" alt="" className="h-7 w-auto -translate-y-1" />
+            <img src="/logo-icon-bold.svg?v=8" alt="" className="h-7 w-auto -translate-y-1" />
             <span className="font-display text-2xl tracking-[0.25em] text-warm">PRISM</span>
           </div>
           <p className="mt-2 text-warm/30 text-[9px] tracking-[0.5em] uppercase">
@@ -326,7 +329,7 @@ function LoadingScreen() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <img src="/logo-icon.svg?v=6" alt="Prism" className="w-16 h-16 animate-pulse" />
+        <img src="/logo-icon-bold.svg?v=8" alt="Prism" className="w-16 h-16 animate-pulse" />
         <div className="flex gap-1">
           {[0, 1, 2].map((i) => (
             <div key={i} className="w-1.5 h-1.5 rounded-full bg-accent/50 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
@@ -417,7 +420,7 @@ export default function Home() {
   if (!allMedia.length) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-3 text-center px-4">
-        <img src="/logo-icon.svg?v=6" alt="Prism" className="w-16 h-16 opacity-30 mb-2" />
+        <img src="/logo-icon-bold.svg?v=8" alt="Prism" className="w-16 h-16 opacity-30 mb-2" />
         <p className="text-warm/50">Bibliothèque vide.</p>
       </div>
     )
@@ -488,6 +491,11 @@ export default function Home() {
           />
         )}
 
+        {/* ── Nouveautés ──────────────────────────────────────────────────── */}
+        {newReleases.length > 0 && (
+          <MediaRow title={`Nouveautés ${CURRENT_YEAR}`} items={newReleases} />
+        )}
+
         {/* ── Séries populaires ───────────────────────────────────────────── */}
         {popularSeries.length > 0 && (
           <MediaRow title="Séries populaires" items={popularSeries} />
@@ -496,11 +504,6 @@ export default function Home() {
         {/* ── Séries récentes ─────────────────────────────────────────────── */}
         {recentSeries.length > 0 && (
           <MediaRow title="Séries récentes" items={recentSeries} />
-        )}
-
-        {/* ── Nouveautés ──────────────────────────────────────────────────── */}
-        {newReleases.length > 0 && (
-          <MediaRow title={`Nouveautés ${CURRENT_YEAR}`} items={newReleases} />
         )}
 
         {/* ── Sections par genre (ordre priorisé) ─────────────────────────── */}

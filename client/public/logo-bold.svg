@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 88" fill="none">
+
+  <!-- Rayon entrant -->
+  <line x1="2" y1="44" x2="42" y2="44"
+        stroke="#FFFFFF" stroke-width="8.5" stroke-linecap="butt"/>
+
+  <!-- Rayons rouges -->
+  <line x1="68" y1="25" x2="134" y2="25" stroke="#FF1111" stroke-width="9.5"/>
+  <line x1="75" y1="38" x2="134" y2="38" stroke="#FF1111" stroke-width="9.5"/>
+  <line x1="83" y1="52" x2="134" y2="52" stroke="#FF1111" stroke-width="9.5"/>
+  <line x1="92" y1="67" x2="134" y2="67" stroke="#FF1111" stroke-width="9.5"/>
+
+  <!-- Triangle prisme équilatéral -->
+  <polygon points="60,12 23,76 97,76"
+           stroke="#FFFFFF" stroke-width="8.5"
+           fill="none" stroke-linejoin="miter"/>
+
+  <!-- Wordmark PRISM -->
+  <text x="148" y="56"
+    font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+    font-size="36"
+    font-weight="800"
+    letter-spacing="10"
+    fill="#FFFFFF">PRISM</text>
+
+
+</svg>

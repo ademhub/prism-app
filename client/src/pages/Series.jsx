@@ -63,7 +63,7 @@ export default function Series() {
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
-      <img src="/logo-icon.svg?v=7" alt="" className="w-12 h-12 animate-pulse" />
+      <img src="/logo-icon-bold.svg?v=8" alt="" className="w-12 h-12 animate-pulse" />
     </div>
   )
 
