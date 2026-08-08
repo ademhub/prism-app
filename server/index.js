@@ -17,7 +17,7 @@ import { fetchTvSaisonsAndStore } from './tmdb.js'
 
 const app = express()
 const db = new Database('movy.db')
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 
 db.pragma('journal_mode = WAL')
 db.pragma('cache_size = -32000')
