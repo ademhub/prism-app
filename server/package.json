@@ -2,7 +2,8 @@
   "name": "movy-server",
   "type": "module",
   "scripts": {
-    "dev": "node --env-file=.env --watch index.js"
+    "dev": "node --env-file=.env --watch index.js",
+    "start": "node index.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.0.0",
