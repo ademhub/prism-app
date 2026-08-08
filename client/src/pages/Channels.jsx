@@ -4,6 +4,7 @@ import Hls from 'hls.js'
 import { X, Radio, Wifi, ChevronLeft } from 'lucide-react'
 import { AnimatePresence } from 'framer-motion'
 import ShareModal from '../components/ShareModal'
+import { API } from '../api'
 
 const LAST_CHANNEL_KEY = 'movy_last_channel'
 
@@ -50,7 +51,7 @@ export default function Channels() {
   const cacheRef = useRef({})
 
   useEffect(() => {
-    fetch(`/api/channels/countries`)
+    fetch(`${API}/api/channels/countries`)
       .then((r) => r.json())
       .then(setCountries)
       .catch(() => {})
@@ -68,7 +69,7 @@ export default function Channels() {
     setLoading(true)
     setError(null)
     try {
-      const res  = await fetch(`/api/channels?country=${c.code}`)
+      const res  = await fetch(`${API}/api/channels?country=${c.code}`)
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`)
       cacheRef.current[c.code] = data
@@ -323,11 +324,11 @@ function LivePlayerOverlay({ channel, onClose, channelList, channelIndex, onSwit
     setStreamUrl(null)
     setResolveErr(null)
     setAltLoading(false)
-    fetch(`/api/live-resolve?url=${encodeURIComponent(channel.url)}&name=${encodeURIComponent(channel.name)}`)
+    fetch(`${API}/api/live-resolve?url=${encodeURIComponent(channel.url)}&name=${encodeURIComponent(channel.name)}`)
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return
-        if (data.stream) setStreamUrl(`/api/hls-proxy?url=${encodeURIComponent(data.stream)}`)
+        if (data.stream) setStreamUrl(`${API}/api/hls-proxy?url=${encodeURIComponent(data.stream)}`)
         else setResolveErr(data.error ?? 'Flux indisponible')
       })
       .catch(() => { if (!cancelled) setResolveErr('Flux indisponible') })
@@ -342,7 +343,7 @@ function LivePlayerOverlay({ channel, onClose, channelList, channelIndex, onSwit
       .filter((i) => i >= 0 && i < channelList.length && i !== channelIndex)
       .forEach((i) => {
         const ch = channelList[i]
-        fetch(`/api/live-resolve?url=${encodeURIComponent(ch.url)}&name=${encodeURIComponent(ch.name)}`).catch(() => {})
+        fetch(`${API}/api/live-resolve?url=${encodeURIComponent(ch.url)}&name=${encodeURIComponent(ch.name)}`).catch(() => {})
       })
   }, [channel.url, channelIndex, channelList])
 
@@ -359,10 +360,10 @@ function LivePlayerOverlay({ channel, onClose, channelList, channelIndex, onSwit
     setAltLoading(true)
     setStreamUrl(null)
     setResolveErr(null)
-    fetch(`/api/live-resolve?url=${encodeURIComponent(channel.url)}&name=${encodeURIComponent(channel.name)}&source=alt`)
+    fetch(`${API}/api/live-resolve?url=${encodeURIComponent(channel.url)}&name=${encodeURIComponent(channel.name)}&source=alt`)
       .then((r) => r.json())
       .then((data) => {
-        if (data.stream) setStreamUrl(`/api/hls-proxy?url=${encodeURIComponent(data.stream)}`)
+        if (data.stream) setStreamUrl(`${API}/api/hls-proxy?url=${encodeURIComponent(data.stream)}`)
         else setResolveErr(data.error ?? 'Aucune source alternative')
       })
       .catch(() => setResolveErr('Aucune source alternative'))

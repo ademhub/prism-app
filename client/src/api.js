@@ -1,5 +1,5 @@
 const TMDB_IMG = 'https://image.tmdb.org/t/p'
-const API = window.location.hostname === 'localhost'
+export const API = window.location.hostname === 'localhost'
   ? ''
   : 'https://prism-app-production-9c9d.up.railway.app'
 
