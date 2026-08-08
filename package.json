@@ -2,7 +2,9 @@
   "name": "movy",
   "private": true,
   "scripts": {
-    "dev": "concurrently -n server,client -c cyan,magenta \"npm run dev --prefix server\" \"npm run dev --prefix client\""
+    "dev": "concurrently -n server,client -c cyan,magenta \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "start": "node server/index.js",
+    "install:server": "npm install --prefix server"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"
