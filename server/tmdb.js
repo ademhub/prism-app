@@ -52,6 +52,9 @@ export function initTmdbSchema(db) {
     ['media_type',      'TEXT'],
     ['watch_providers', 'TEXT'],
     ['saisons',         'TEXT'],
+    ['is_adult',        'INTEGER'],
+    ['collection_id',   'INTEGER'],
+    ['collection_name', 'TEXT'],
   ]
 
   const existing = new Set(
