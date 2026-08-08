@@ -23,37 +23,37 @@ const CURRENT_YEAR = new Date().getFullYear()
 // ── Top 10 curatés du moment ─────────────────────────────────────────────────
 
 const CURATED_TOP10 = [
-  // The Odyssey (Nolan, 2026) — tmdb 1698863
-  { label: 'The Odyssey',                               test: (t, m) => /^(the )?odyssey$/i.test(t) || /^(l')?odyssée?$/i.test(t) || m.tmdb_id === 1698863 },
-  // Spider-Man: Brand New Day (Tom Holland, 2026)
-  { label: 'Spider-Man: Brand New Day',                 test: (t)    => /brand new day/i.test(t) },
-  // Obsession
-  { label: 'Obsession',                                 test: (t)    => /^obsession$/i.test(t) },
-  // Alien: Romulus (2024)
-  { label: 'Alien: Romulus',                            test: (t)    => /romulus/i.test(t) },
-  // Kingdom of the Planet of the Apes (2024)
-  { label: 'La Planète des Singes : Le Nouveau Royaume', test: (t, m) => /kingdom of the planet/i.test(t) || /nouveau royaume/i.test(t) || m.tmdb_id === 653346 },
-  // F1 (Brad Pitt, 2025) — tmdb 911430
-  { label: 'F1',                                        test: (t, m) => m.tmdb_id === 911430 || (/^f1/i.test(t) && (m.annee_devinee ?? 0) >= 2025) },
-  // Mission: Impossible – The Final Reckoning (2025)
-  { label: 'Mission: Impossible – The Final Reckoning', test: (t)    => /final reckoning/i.test(t) },
-  // Sinners (Michael B. Jordan, 2025)
-  { label: 'Sinners',                                   test: (t)    => /^sinners$/i.test(t) },
-  // How to Train Your Dragon live-action (2025) — tmdb 1087192
-  { label: 'How to Train Your Dragon',                  test: (t, m) => /train your dragon/i.test(t) || /dresser votre dragon/i.test(t) || m.tmdb_id === 1087192 },
-  // Deadpool & Wolverine (2024)
-  { label: 'Deadpool & Wolverine',                      test: (t)    => /deadpool.*wolverine/i.test(t) || /wolverine.*deadpool/i.test(t) },
-  // Des Minions et des monstres (2026)
-  { label: 'Des Minions et des monstres',               test: (t, m) => /minions.*monstres/i.test(t) || /monstres.*minions/i.test(t) || m.tmdb_id === 1315772 },
+  // The Odyssey (Nolan, 2026) - tmdb 1698863
+  { label: 'The Odyssey',                                   test: (t, m) => m.tmdb_id === 1698863 },
+  // Spider-Man: Brand New Day (2026) - tmdb 969681
+  { label: 'Spider-Man: Brand New Day',                     test: (t, m) => m.tmdb_id === 969681 },
+  // Obsession (2026) - tmdb 1339713
+  { label: 'Obsession',                                     test: (t, m) => m.tmdb_id === 1339713 },
+  // Alien: Romulus (2024) - tmdb 945961
+  { label: 'Alien: Romulus',                                test: (t, m) => m.tmdb_id === 945961 },
+  // Superman (2025) - tmdb 1061474
+  { label: 'Superman',                                      test: (t, m) => m.tmdb_id === 1061474 },
+  // Des Minions et des monstres (2026) - tmdb 1315772
+  { label: 'Des Minions et des monstres',                   test: (t, m) => m.tmdb_id === 1315772 },
+  // F1 (Brad Pitt, 2025) - tmdb 911430
+  { label: 'F1',                                            test: (t, m) => m.tmdb_id === 911430 },
+  // Mission: Impossible - The Final Reckoning (2025) - tmdb 575265
+  { label: 'Mission: Impossible - The Final Reckoning',     test: (t, m) => m.tmdb_id === 575265 },
+  // Sinners (2025) - tmdb 1233413
+  { label: 'Sinners',                                       test: (t, m) => m.tmdb_id === 1233413 },
+  // How to Train Your Dragon (2025) - tmdb 1087192
+  { label: 'How to Train Your Dragon',                      test: (t, m) => m.tmdb_id === 1087192 },
+  // Deadpool & Wolverine (2024) - tmdb 533535
+  { label: 'Deadpool & Wolverine',                          test: (t, m) => m.tmdb_id === 533535 },
 ]
 
 function getCuratedTop10(list) {
-  return CURATED_TOP10.map(({ label, test }) => {
+  return CURATED_TOP10.flatMap(({ test }) => {
     const match = list.find((m) => {
       const t = m.titre_officiel || m.titre_brut || ''
       return test(t, m)
     })
-    return match ?? { id: null, titre_officiel: label, titre_brut: label, poster_path: null, backdrop_path: null, note: null, genres: [] }
+    return match ? [match] : []
   })
 }
 
@@ -439,7 +439,7 @@ export default function Home() {
   }
 
   // Données organisées (mode normal)
-  const curatedTop10  = getCuratedTop10(movies)
+  const curatedTop10  = getCuratedTop10(movies).slice(0, 10)
   const newReleases   = getNewReleases(movies)
   const groups        = groupByGenre(movies)
   const sagas         = detectSagas(movies)
