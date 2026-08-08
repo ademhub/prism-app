@@ -113,6 +113,7 @@ db.exec(`
 app.use((req, res, next) => {
   const allowed = [
     'https://client-two-nu-94.vercel.app',
+    'https://prism-three-ashen.vercel.app',
     'http://localhost:5173',
     'http://localhost:3000',
   ]
