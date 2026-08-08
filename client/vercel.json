@@ -5,11 +5,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://REMPLACE_PAR_URL_RAILWAY/api/:path*"
+      "destination": "https://https://prism-app-production-9c9d.up.railway.app/api/:path*"
     },
     {
       "source": "/uploads/:path*",
-      "destination": "https://REMPLACE_PAR_URL_RAILWAY/uploads/:path*"
+      "destination": "https://https://prism-app-production-9c9d.up.railway.app/uploads/:path*"
     },
     {
       "source": "/:path*",
