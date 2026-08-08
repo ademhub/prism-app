@@ -1,5 +1,7 @@
 const TMDB_IMG = 'https://image.tmdb.org/t/p'
-const API = import.meta.env.VITE_API_URL || ''
+const API = window.location.hostname === 'localhost'
+  ? ''
+  : 'https://prism-app-production-9c9d.up.railway.app'
 
 export const img = (path, size = 'w500') =>
   path ? `${TMDB_IMG}/${size}${path}` : null
