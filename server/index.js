@@ -949,8 +949,8 @@ app.post('/api/notifications/read', (req, res) => {
   res.json({ ok: true })
 })
 
-app.listen(PORT, async () => {
-  console.log(`Server running on http://localhost:${PORT}`)
+app.listen(PORT, '0.0.0.0', async () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`)
 
   // Précharge les chaînes françaises + catalogue iptv-org en arrière-plan
   prefetchFrance().catch(() => {})
