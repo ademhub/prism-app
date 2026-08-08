@@ -412,6 +412,9 @@ export default function Home() {
     [allMedia, favIds]
   )
 
+  // Home = vitrine films : les séries restent dans leurs 2 rangées dédiées
+  const movies = allMedia.filter((m) => m.media_type !== 'tv')
+  
   if (loading) return <LoadingScreen />
 
   if (!allMedia.length) {
@@ -425,7 +428,7 @@ export default function Home() {
 
   // Mode recherche
   if (query) {
-    const results = allMedia
+    const results = movies
       .filter((m) => {
         const titleHay = `${m.titre_officiel ?? ''} ${m.titre_brut ?? ''}`.toLowerCase()
         const genreHay = (m.genres ?? []).join(' ').toLowerCase()
@@ -436,14 +439,14 @@ export default function Home() {
   }
 
   // Données organisées (mode normal)
-  const curatedTop10  = getCuratedTop10(allMedia)
-  const newReleases   = getNewReleases(allMedia)
-  const groups        = groupByGenre(allMedia)
-  const sagas         = detectSagas(allMedia)
+  const curatedTop10  = getCuratedTop10(movies)
+  const newReleases   = getNewReleases(movies)
+  const groups        = groupByGenre(movies)
+  const sagas         = detectSagas(movies)
   const popularSeries = getPopularSeries(allMedia)
   const recentSeries  = getRecentSeries(allMedia)
   const inProgress    = getInProgress(progressList)
-  const { films: recFilms, genres: recGenres } = getRecommendations(progressList, allMedia)
+  const { films: recFilms, genres: recGenres } = getRecommendations(progressList, movies)
 
   return (
     <main>
