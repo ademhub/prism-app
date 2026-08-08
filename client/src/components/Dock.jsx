@@ -28,7 +28,7 @@ function DockBtn({ children, label, active, onClick, className = '' }) {
       <motion.button
         onClick={onClick}
         whileTap={{ scale: 0.94 }}
-        className={`w-12 h-12 md:w-10 md:h-10 flex items-center justify-center rounded-xl outline-none shrink-0 cursor-pointer transition-colors duration-150 ${
+        className={`w-9 h-9 md:w-8 md:h-8 flex items-center justify-center rounded-lg outline-none shrink-0 cursor-pointer transition-colors duration-150 ${
           active
             ? 'bg-white/15 text-accent'
             : 'text-warm/55 hover:bg-white/8 hover:text-warm'
@@ -220,8 +220,8 @@ export default function Dock() {
       </AnimatePresence>
 
       {/* ── Dock ─────────────────────────────────────────────────────────── */}
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[300]">
-        <div className="flex items-center gap-1 p-2.5 md:p-2.5 px-3.5 md:px-2.5 rounded-2xl backdrop-blur-xl border border-white/10 bg-surface/80 shadow-[0_8px_40px_rgba(0,0,0,0.6)]">
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[300]">
+        <div className="flex items-center gap-0.5 p-1.5 px-2 rounded-xl backdrop-blur-xl border border-white/10 bg-surface/80 shadow-[0_8px_40px_rgba(0,0,0,0.6)]">
           <DockBtn label="Accueil" active={activeHome} onClick={handleHome}>
             <Home size={16} />
           </DockBtn>

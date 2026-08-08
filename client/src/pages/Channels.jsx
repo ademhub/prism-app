@@ -454,7 +454,7 @@ function LivePlayerOverlay({ channel, onClose, channelList, channelIndex, onSwit
                   title="Essayer une autre source">
                   {altLoading
                     ? <span className="w-3 h-3 border border-warm/40 border-t-warm rounded-full animate-spin inline-block" />
-                    : '⚡'}
+                    : <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
                   <span className="hidden sm:inline">Autre source</span>
                 </button>
                 <button onClick={() => setShowShare(true)}

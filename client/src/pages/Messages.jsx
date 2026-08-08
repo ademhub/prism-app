@@ -352,7 +352,7 @@ export default function Messages() {
   }
 
   function lastMsgPreview(raw) {
-    try { const p = JSON.parse(raw); if (p?.type === 'share') return `🎬 ${p.title || p.name}` } catch {}
+    try { const p = JSON.parse(raw); if (p?.type === 'share') return `[Film] ${p.title || p.name}` } catch {}
     return raw
   }
 
