@@ -110,21 +110,28 @@ export default function Dock() {
     const MAX = 1.1
     const UP_RANGE = 110       // remonter : tres reactif au doigt
     const DOWN_RANGE = 260     // descendre : plus progressif
-    const EASE_UP = 0.34       // agrandissement rapide
-    const EASE_DOWN = 0.09     // retrecissement tres doux
+    const EASE_UP = 0.22       // agrandissement rapide mais lisse
+    const EASE_DOWN = 0.075    // retrecissement tres doux
+    const FRAME = 1000 / 60
     let lastY = window.scrollY
     let target = MAX
     let current = MAX
+    let prevT = 0
     let raf = 0
-    const tick = () => {
+    const tick = (now) => {
+      const dt = prevT ? Math.min(64, now - prevT) : FRAME
+      prevT = now
       const diff = target - current
-      if (Math.abs(diff) < 0.0004) {
+      if (Math.abs(diff) < 0.00015) {
         current = target
         dockScale.set(current)
+        prevT = 0
         raf = 0
         return
       }
-      current += diff * (diff > 0 ? EASE_UP : EASE_DOWN)
+      // lissage independant du taux de rafraichissement (60, 90, 120 Hz)
+      const ease = diff > 0 ? EASE_UP : EASE_DOWN
+      current += diff * (1 - Math.pow(1 - ease, dt / FRAME))
       dockScale.set(current)
       raf = requestAnimationFrame(tick)
     }
