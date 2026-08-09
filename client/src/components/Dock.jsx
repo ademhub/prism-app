@@ -103,6 +103,20 @@ export default function Dock() {
     return () => clearInterval(interval)
   }, [socialId])
 
+  // Retrecit legerement le dock quand on scrolle vers le bas
+  const [dockShrunk, setDockShrunk] = useState(false)
+  useEffect(() => {
+    let lastY = window.scrollY
+    const onScroll = () => {
+      const y = window.scrollY
+      if (Math.abs(y - lastY) < 6) return
+      setDockShrunk(y > lastY && y > 80)
+      lastY = y
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   const closeAll   = useCallback(() => { setSearchOpen(false); setCatsOpen(false); setRandomOpen(false); setProfileOpen(false) }, [])
   const openSearch = useCallback(() => { setSearchOpen(true);  setCatsOpen(false); setRandomOpen(false); setProfileOpen(false) }, [])
   const openCats   = useCallback(() => { setCatsOpen(true);    setSearchOpen(false); setRandomOpen(false); setProfileOpen(false) }, [])
@@ -220,7 +234,7 @@ export default function Dock() {
       </AnimatePresence>
 
       {/* ── Dock ─────────────────────────────────────────────────────────── */}
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[300]">
+      <div className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-[300] origin-bottom transition-transform duration-300 ease-out ${dockShrunk ? 'scale-[0.85]' : 'scale-100'}`}>
         <div className="flex items-center gap-0.5 p-1.5 px-2 rounded-xl backdrop-blur-xl border border-white/10 bg-surface/80 shadow-[0_8px_40px_rgba(0,0,0,0.6)]">
           <DockBtn label="Accueil" active={activeHome} onClick={handleHome}>
             <Home size={16} />
