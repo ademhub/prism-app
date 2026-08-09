@@ -115,7 +115,7 @@ export default function Dock() {
     const FRAME = 1000 / 60
     let lastY = window.scrollY
     let target = MAX
-    let current = MAX
+    let current = dockScale.get()
     let prevT = 0
     let raf = 0
     const tick = (now) => {
@@ -136,6 +136,7 @@ export default function Dock() {
       raf = requestAnimationFrame(tick)
     }
     const onScroll = () => {
+      if (searchOpen) return
       const y = window.scrollY
       const delta = y - lastY
       lastY = y
@@ -145,11 +146,12 @@ export default function Dock() {
       if (!raf) raf = requestAnimationFrame(tick)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
+    if (searchOpen && current !== MAX) raf = requestAnimationFrame(tick)
     return () => {
       window.removeEventListener('scroll', onScroll)
       if (raf) cancelAnimationFrame(raf)
     }
-  }, [dockScale])
+  }, [dockScale, searchOpen])
 
   const closeAll   = useCallback(() => { setSearchOpen(false); setCatsOpen(false); setRandomOpen(false); setProfileOpen(false) }, [])
   const openSearch = useCallback(() => { setSearchOpen(true);  setCatsOpen(false); setRandomOpen(false); setProfileOpen(false) }, [])
