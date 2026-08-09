@@ -269,10 +269,10 @@ export default function Dock() {
 
       {/* ── Dock ─────────────────────────────────────────────────────────── */}
       <motion.div
-        className="fixed bottom-4 left-1/2 z-[300] origin-bottom will-change-transform"
+        className="fixed bottom-4 left-1/2 z-[300] origin-bottom will-change-transform transform-gpu backface-hidden"
         style={{ x: '-50%', scale: dockScale }}
       >
-        <div className="flex items-center gap-0.5 p-1.5 px-2 rounded-xl backdrop-blur-xl border border-white/10 bg-surface/80 shadow-[0_8px_40px_rgba(0,0,0,0.6)]">
+        <div className="flex items-center gap-0.5 p-1.5 px-2 rounded-xl border border-white/10 bg-surface/90 shadow-[0_6px_20px_rgba(0,0,0,0.5)]">
           <DockBtn label="Accueil" active={activeHome} onClick={handleHome}>
             <Home size={16} />
           </DockBtn>
