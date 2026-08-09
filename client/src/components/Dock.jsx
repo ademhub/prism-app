@@ -108,9 +108,9 @@ export default function Dock() {
   useEffect(() => {
     const MIN = 0.88
     const MAX = 1.1
-    const UP_RANGE = 110       // remonter : tres reactif au doigt
+    const UP_RANGE = 65       // remonter : tres reactif au doigt
     const DOWN_RANGE = 130     // descendre : plus progressif
-    const EASE_UP = 0.22       // agrandissement rapide mais lisse
+    const EASE_UP = 0.34       // agrandissement rapide mais lisse
     const EASE_DOWN = 0.18    // retrecissement tres doux
     const FRAME = 1000 / 60
     let lastY = window.scrollY
