@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue } from 'framer-motion'
 import {
   Home, Search, LayoutGrid, Compass, Shuffle,
   LogIn, LogOut, User, Settings, Users, Tv, Radio, MessageCircle, UserPlus, Film,
@@ -103,33 +103,46 @@ export default function Dock() {
     return () => clearInterval(interval)
   }, [socialId])
 
-  // Le dock grandit progressivement quand on remonte, retrecit quand on descend
-  const dockScaleRaw = useMotionValue(1.08)
-  const dockScale = useSpring(dockScaleRaw, { stiffness: 320, damping: 38, mass: 0.4 })
+  // Taille du dock pilotee au pixel pres par le scroll
+  const dockScale = useMotionValue(1.1)
   useEffect(() => {
-    const MIN = 0.9
-    const MAX = 1.08
-    const RANGE = 320
+    const MIN = 0.88
+    const MAX = 1.1
+    const UP_RANGE = 110       // remonter : tres reactif au doigt
+    const DOWN_RANGE = 260     // descendre : plus progressif
+    const EASE_UP = 0.34       // agrandissement rapide
+    const EASE_DOWN = 0.09     // retrecissement tres doux
     let lastY = window.scrollY
-    let progress = 1
-    let ticking = false
-    const update = () => {
-      ticking = false
+    let target = MAX
+    let current = MAX
+    let raf = 0
+    const tick = () => {
+      const diff = target - current
+      if (Math.abs(diff) < 0.0004) {
+        current = target
+        dockScale.set(current)
+        raf = 0
+        return
+      }
+      current += diff * (diff > 0 ? EASE_UP : EASE_DOWN)
+      dockScale.set(current)
+      raf = requestAnimationFrame(tick)
+    }
+    const onScroll = () => {
       const y = window.scrollY
       const delta = y - lastY
       lastY = y
       if (!delta) return
-      progress = Math.min(1, Math.max(0, progress - delta / RANGE))
-      dockScaleRaw.set(MIN + (MAX - MIN) * progress)
-    }
-    const onScroll = () => {
-      if (ticking) return
-      ticking = true
-      requestAnimationFrame(update)
+      const range = delta < 0 ? UP_RANGE : DOWN_RANGE
+      target = Math.min(MAX, Math.max(MIN, target - (delta / range) * (MAX - MIN)))
+      if (!raf) raf = requestAnimationFrame(tick)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [dockScaleRaw])
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [dockScale])
 
   const closeAll   = useCallback(() => { setSearchOpen(false); setCatsOpen(false); setRandomOpen(false); setProfileOpen(false) }, [])
   const openSearch = useCallback(() => { setSearchOpen(true);  setCatsOpen(false); setRandomOpen(false); setProfileOpen(false) }, [])
