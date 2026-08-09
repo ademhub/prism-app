@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion'
 import {
   Home, Search, LayoutGrid, Compass, Shuffle,
   LogIn, LogOut, User, Settings, Users, Tv, Radio, MessageCircle, UserPlus, Film,
@@ -103,18 +103,24 @@ export default function Dock() {
     return () => clearInterval(interval)
   }, [socialId])
 
-  // Retrecit legerement le dock quand on scrolle vers le bas
-  const [dockShrunk, setDockShrunk] = useState(false)
+  // Le dock grandit progressivement quand on remonte, retrecit quand on descend
+  const dockScaleRaw = useMotionValue(1.08)
+  const dockScale = useSpring(dockScaleRaw, { stiffness: 320, damping: 38, mass: 0.4 })
   useEffect(() => {
+    const MIN = 0.9
+    const MAX = 1.08
+    const RANGE = 320
     let lastY = window.scrollY
+    let progress = 1
     let ticking = false
     const update = () => {
       ticking = false
       const y = window.scrollY
       const delta = y - lastY
-      if (Math.abs(delta) < 4) return
-      setDockShrunk(delta > 0 && y > 60)
       lastY = y
+      if (!delta) return
+      progress = Math.min(1, Math.max(0, progress - delta / RANGE))
+      dockScaleRaw.set(MIN + (MAX - MIN) * progress)
     }
     const onScroll = () => {
       if (ticking) return
@@ -123,7 +129,7 @@ export default function Dock() {
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [dockScaleRaw])
 
   const closeAll   = useCallback(() => { setSearchOpen(false); setCatsOpen(false); setRandomOpen(false); setProfileOpen(false) }, [])
   const openSearch = useCallback(() => { setSearchOpen(true);  setCatsOpen(false); setRandomOpen(false); setProfileOpen(false) }, [])
@@ -244,9 +250,7 @@ export default function Dock() {
       {/* ── Dock ─────────────────────────────────────────────────────────── */}
       <motion.div
         className="fixed bottom-4 left-1/2 z-[300] origin-bottom will-change-transform"
-        initial={false}
-        animate={{ x: '-50%', scale: dockShrunk ? 0.9 : 1.06 }}
-        transition={{ type: 'spring', stiffness: 210, damping: 26, mass: 0.7 }}
+        style={{ x: '-50%', scale: dockScale }}
       >
         <div className="flex items-center gap-0.5 p-1.5 px-2 rounded-xl backdrop-blur-xl border border-white/10 bg-surface/80 shadow-[0_8px_40px_rgba(0,0,0,0.6)]">
           <DockBtn label="Accueil" active={activeHome} onClick={handleHome}>
