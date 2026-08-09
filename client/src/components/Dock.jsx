@@ -107,11 +107,19 @@ export default function Dock() {
   const [dockShrunk, setDockShrunk] = useState(false)
   useEffect(() => {
     let lastY = window.scrollY
-    const onScroll = () => {
+    let ticking = false
+    const update = () => {
+      ticking = false
       const y = window.scrollY
-      if (Math.abs(y - lastY) < 6) return
-      setDockShrunk(y > lastY && y > 80)
+      const delta = y - lastY
+      if (Math.abs(delta) < 4) return
+      setDockShrunk(delta > 0 && y > 60)
       lastY = y
+    }
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(update)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -234,7 +242,12 @@ export default function Dock() {
       </AnimatePresence>
 
       {/* ── Dock ─────────────────────────────────────────────────────────── */}
-      <div className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-[300] origin-bottom transition-transform duration-300 ease-out ${dockShrunk ? 'scale-[0.85]' : 'scale-100'}`}>
+      <motion.div
+        className="fixed bottom-4 left-1/2 z-[300] origin-bottom will-change-transform"
+        initial={false}
+        animate={{ x: '-50%', scale: dockShrunk ? 0.9 : 1.06 }}
+        transition={{ type: 'spring', stiffness: 210, damping: 26, mass: 0.7 }}
+      >
         <div className="flex items-center gap-0.5 p-1.5 px-2 rounded-xl backdrop-blur-xl border border-white/10 bg-surface/80 shadow-[0_8px_40px_rgba(0,0,0,0.6)]">
           <DockBtn label="Accueil" active={activeHome} onClick={handleHome}>
             <Home size={16} />
@@ -391,7 +404,7 @@ export default function Dock() {
             </motion.button>
           )}
         </div>
-      </div>
+      </motion.div>
     </>
   )
 }
