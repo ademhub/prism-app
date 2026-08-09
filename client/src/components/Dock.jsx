@@ -109,9 +109,9 @@ export default function Dock() {
     const MIN = 0.88
     const MAX = 1.1
     const UP_RANGE = 110       // remonter : tres reactif au doigt
-    const DOWN_RANGE = 260     // descendre : plus progressif
+    const DOWN_RANGE = 130     // descendre : plus progressif
     const EASE_UP = 0.22       // agrandissement rapide mais lisse
-    const EASE_DOWN = 0.075    // retrecissement tres doux
+    const EASE_DOWN = 0.18    // retrecissement tres doux
     const FRAME = 1000 / 60
     let lastY = window.scrollY
     let target = MAX
