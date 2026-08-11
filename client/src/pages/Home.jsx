@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import CircularGallery from '../components/CircularGallery'
 import { CoverflowCarousel } from '../components/CoverflowCarousel'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { getMedia, getProgress, getCollections, img } from '../api'
 import MediaRow from '../components/MediaRow'
 import MediaCard from '../components/MediaCard'
@@ -123,21 +123,27 @@ function groupByGenre(list) {
 const TMDB_IMG = 'https://image.tmdb.org/t/p'
 
 const HERO_ITEMS = [
-  { image: `${TMDB_IMG}/w500/6dfr9o52w9AVYJSlSA1IBUlLCyU.jpg`, backdrop: `${TMDB_IMG}/w1280/RMXG8myu1aGlNUsRjtxzmpdMK0.jpg`, text: "L'Odyssée" },
-  { image: `${TMDB_IMG}/w500/tV712n7bMaRuaKyltFl65HPNRiP.jpg`, text: 'Spider-Man : Brand New Day' },
-  { image: `${TMDB_IMG}/w500/mDCR1frpUvGfIKksuM440VLb7X9.jpg`, text: 'Obsession' },
-  { image: `${TMDB_IMG}/w500/9ZmdDOIbiFCZOvRXBQ7muWUu32l.jpg`, text: 'Sinners' },
-  { image: `${TMDB_IMG}/w500/lBT9IItBO0yat1I6EBeIbtl4jIA.jpg`, text: 'Kill Bill' },
-  { image: `${TMDB_IMG}/w500/up0kyZZlLX24dE9SzDuTjXe6HFl.jpg`, text: 'F1® Le Film' },
+  { image: `${TMDB_IMG}/w500/6dfr9o52w9AVYJSlSA1IBUlLCyU.jpg`, backdrop: `${TMDB_IMG}/w1280/RMXG8myu1aGlNUsRjtxzmpdMK0.jpg`, text: "L'Odyssée",              link: 43   },
+  { image: `${TMDB_IMG}/w500/tV712n7bMaRuaKyltFl65HPNRiP.jpg`, text: 'Spider-Man : Brand New Day', link: 24   },
+  { image: `${TMDB_IMG}/w500/mDCR1frpUvGfIKksuM440VLb7X9.jpg`, text: 'Obsession',                  link: 323  },
+  { image: `${TMDB_IMG}/w500/9ZmdDOIbiFCZOvRXBQ7muWUu32l.jpg`, text: 'Sinners',                    link: 1510 },
+  { image: `${TMDB_IMG}/w500/lBT9IItBO0yat1I6EBeIbtl4jIA.jpg`, text: 'Kill Bill',                  link: 4223 },
+  { image: `${TMDB_IMG}/w500/up0kyZZlLX24dE9SzDuTjXe6HFl.jpg`, text: 'F1® Le Film',               link: 1324 },
 ]
 
 const HERO_SLIDES = HERO_ITEMS.map(item => ({ src: item.image, backdrop: item.backdrop ?? item.image, alt: item.text, title: item.text }))
 
 function HeroSection() {
+  const navigate = useNavigate()
   const [scrollY, setScrollY] = useState(0)
   const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 767px)').matches)
   const [activeSlide, setActiveSlide] = useState(0)
   const [activeDesktop, setActiveDesktop] = useState(0)
+
+  const handleHeroClick = (idx) => {
+    const item = HERO_ITEMS[idx]
+    if (item?.link) navigate(`/detail/${item.link}`)
+  }
 
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY)
@@ -201,6 +207,7 @@ function HeroSection() {
                 noDrag
                 autoAdvanceMs={10000}
                 onSlideChange={setActiveSlide}
+                onSlideClick={handleHeroClick}
               />
               <button
                 onClick={() => window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })}
@@ -223,6 +230,7 @@ function HeroSection() {
               noDrag
               autoSpeed={0.006}
               onCenterChange={setActiveDesktop}
+              onItemClick={handleHeroClick}
             />
           )}
         </div>

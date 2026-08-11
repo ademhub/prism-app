@@ -22,6 +22,7 @@ export function CoverflowCarousel({
   noDrag = false,
   autoAdvanceMs = 0,
   onSlideChange,
+  onSlideClick,
   label = 'Cover carousel',
   className,
   cardClassName,
@@ -237,8 +238,10 @@ export function CoverflowCarousel({
                 role="group"
                 aria-roledescription="slide"
                 aria-label={`${index + 1} of ${count}`}
+                onClick={() => onSlideClick?.(index)}
                 className={cn(
                   'absolute left-1/2 top-0 overflow-hidden rounded-2xl shadow-2xl will-change-transform',
+                  onSlideClick ? 'cursor-pointer' : '',
                   cardClassName,
                 )}
                 style={{
