@@ -26,18 +26,24 @@ async function getBrowser() {
 
 const PLAYER_PRIORITY = ['Vidzy', 'Filemoon', 'Premium', 'Voe', 'Filmoon', 'Dood', 'Netu']
 
-async function captureM3u8FromEmbed(embedUrl) {
+// Patterns d'URL publicitaires à ignorer lors de la capture
+const AD_URL_RE = /doubleclick|googlesyndication|adservice|ad[s]?[./]|gads|imasdk|pagead/i
+
+async function captureM3u8FromEmbed(embedUrl, referer = 'https://movix.fun/') {
   const br   = await getBrowser()
   const page = await br.newPage()
   try {
     await page.setViewport({ width: 1280, height: 720 })
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36')
-    await page.setExtraHTTPHeaders({ Referer: 'https://movix.fun/' })
+    await page.setExtraHTTPHeaders({ Referer: referer })
 
     const m3u8Promise = new Promise((resolve) => {
       const timer = setTimeout(() => resolve(null), 25000)
       const check = (url) => {
-        if (url.includes('.m3u8')) { clearTimeout(timer); resolve(url) }
+        if (!url.includes('.m3u8')) return
+        if (AD_URL_RE.test(url)) return   // ignorer les pubs HLS
+        clearTimeout(timer)
+        resolve(url)
       }
       page.on('response', (r) => check(r.url()))
       page.on('request',  (r) => check(r.url()))
@@ -55,12 +61,16 @@ async function captureM3u8FromEmbed(embedUrl) {
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 
-// ── frembed.casa ─────────────────────────────────────────────────────────────
+// ── frembed — HLS direct (sans pub) ──────────────────────────────────────────
+// Ouvre l'embed en headless, capture le .m3u8 brut, retourne type:hls.
+// Fallback vers type:embed si Puppeteer échoue ou dépasse le timeout.
 
-async function tryFrembed(tmdbId, mediaType, season, episode) {
+async function tryFrembedHls(tmdbId, mediaType, season, episode) {
   try {
-    const isTv     = mediaType !== 'movie'
-    const apiType  = isTv ? 'series' : 'movies'
+    const isTv    = mediaType !== 'movie'
+    const apiType = isTv ? 'series' : 'movies'
+
+    // Vérifie que frembed a ce contenu
     const res = await fetch(
       `https://frembed.casa/api/public/v1/${apiType}/${tmdbId}`,
       { headers: { 'User-Agent': UA, Referer: 'https://movix.fun/' }, signal: AbortSignal.timeout(6000) }
@@ -70,11 +80,22 @@ async function tryFrembed(tmdbId, mediaType, season, episode) {
     if (!data.result?.items?.length) return null
 
     const embedType = isTv ? 'serie' : 'movie'
-    let url = `https://frembed.casa/embed/${embedType}/${tmdbId}`
-    if (isTv && season && episode) url += `?sa=${season}&epi=${episode}`
+    let embedUrl = `https://frembed.casa/embed/${embedType}/${tmdbId}`
+    if (isTv && season && episode) embedUrl += `?sa=${season}&epi=${episode}`
 
-    return url
-  } catch {
+    console.log(`[proxy] Puppeteer frembed HLS → ${embedUrl.slice(0, 80)}`)
+    const m3u8 = await captureM3u8FromEmbed(embedUrl, 'https://frembed.casa/')
+
+    if (m3u8) {
+      console.log('[proxy] ✓ HLS capturé (sans pub) :', m3u8.slice(0, 80))
+      return { url: m3u8, type: 'hls' }
+    }
+
+    // Puppeteer n'a pas capturé de stream → fallback embed (pubs présentes)
+    console.log('[proxy] capture HLS échouée, fallback embed frembed')
+    return { url: embedUrl, type: 'embed' }
+  } catch (err) {
+    console.error('[proxy] tryFrembedHls erreur:', err.message)
     return null
   }
 }
@@ -172,7 +193,10 @@ const TV_EMBED_SOURCES = (tmdbId, season, episode) => [
 ]
 
 export async function getStreamUrl(tmdbId, mediaType = 'movie', season = null, episode = null, sourceIdx = 0) {
-  const key    = season && episode ? `${mediaType}:${tmdbId}:s${season}e${episode}:src${sourceIdx}` : `${mediaType}:${tmdbId}`
+  const key    = season && episode
+    ? `${mediaType}:${tmdbId}:s${season}e${episode}:src${sourceIdx}`
+    : `${mediaType}:${tmdbId}`
+
   const cached = urlCache.get(key)
   if (cached && Date.now() - cached.at < CACHE_TTL) {
     console.log(`[proxy] cache hit ${key}`)
@@ -181,26 +205,36 @@ export async function getStreamUrl(tmdbId, mediaType = 'movie', season = null, e
 
   console.log(`[proxy] Récupération ${key}`)
 
-  // Pour les séries TV avec épisode : embed sources directes
+  // ── Séries TV ─────────────────────────────────────────────────────────────
   if (mediaType === 'tv' && season && episode) {
+    // sourceIdx 0 → tente HLS sans pub, puis fallback embed[0]
+    if (sourceIdx === 0) {
+      const frembedHls = await tryFrembedHls(tmdbId, mediaType, season, episode)
+      if (frembedHls) {
+        urlCache.set(key, { ...frembedHls, at: Date.now() })
+        return frembedHls
+      }
+    }
+    // sourceIdx > 0 ou HLS échoué → embed sources classiques
     const sources = TV_EMBED_SOURCES(tmdbId, season, episode)
-    const idx = Math.min(sourceIdx, sources.length - 1)
-    const url = sources[idx]
+    const idx     = Math.min(Math.max(0, sourceIdx - 1), sources.length - 1)
+    const url     = sources[idx]
     console.log(`[proxy] ✓ TV embed src${idx}: ${url}`)
-    const result = { url, type: 'embed', totalSources: sources.length }
+    const result = { url, type: 'embed', totalSources: sources.length + 1 }
     urlCache.set(key, { ...result, at: Date.now() })
     return result
   }
 
-  const frembedUrl = await tryFrembed(tmdbId, mediaType, season, episode)
-  if (frembedUrl) {
-    console.log(`[proxy] ✓ frembed: ${frembedUrl}`)
-    const result = { url: frembedUrl, type: 'embed' }
-    urlCache.set(key, { ...result, at: Date.now() })
-    return result
+  // ── Films ─────────────────────────────────────────────────────────────────
+  // 1) Frembed HLS (sans pub) — capture Puppeteer, fallback embed intégré
+  const frembedResult = await tryFrembedHls(tmdbId, mediaType, season, episode)
+  if (frembedResult) {
+    urlCache.set(key, { ...frembedResult, at: Date.now() })
+    return frembedResult
   }
 
-  console.log('[proxy] frembed non disponible, essai sources alternatives...')
+  // 2) Sources embed alternatives (vidsrc, multiembed, 2embed)
+  console.log('[proxy] frembed indisponible, essai sources alternatives...')
   const embedUrl = await tryEmbedSources(tmdbId, mediaType, season, episode)
   if (embedUrl) {
     const result = { url: embedUrl, type: 'embed' }
@@ -208,6 +242,7 @@ export async function getStreamUrl(tmdbId, mediaType = 'movie', season = null, e
     return result
   }
 
+  // 3) fstream + Puppeteer (dernier recours)
   console.log('[proxy] essai fstream+Puppeteer...')
   const hlsResult = await tryFstream(tmdbId, mediaType)
   if (hlsResult) {
