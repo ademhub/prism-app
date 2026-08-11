@@ -228,25 +228,23 @@ function SimilarFilms({ media, allMedia }) {
 
   if (!similar.length) return null
 
+  const btnCls = "w-8 h-8 rounded-full bg-white/10 border border-white/25 text-white flex items-center justify-center hover:bg-accent hover:border-accent hover:scale-110 active:scale-95 transition-all duration-200 shrink-0"
+
   return (
     <section className="mb-20">
-      <p className="text-warm/30 text-xs uppercase tracking-widest font-semibold mb-4">Dans le même style</p>
-      <div className="relative group/similar">
-        <button
-          onClick={() => scroll(-1)}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center opacity-60 group-hover/similar:opacity-100 hover:bg-accent hover:border-accent hover:scale-110 active:scale-95 transition-all duration-200 shadow-lg backdrop-blur-sm"
-        >
-          <ChevronLeft className="size-4 md:size-5" />
-        </button>
-        <div ref={rowRef} className="flex gap-4 overflow-x-auto no-scrollbar pb-2 px-6">
-          {similar.map((m, i) => <MediaCard key={m.id} media={m} index={i} />)}
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-warm/30 text-xs uppercase tracking-widest font-semibold">Dans le même style</p>
+        <div className="flex gap-2">
+          <button onClick={() => scroll(-1)} className={btnCls}>
+            <ChevronLeft className="size-4" />
+          </button>
+          <button onClick={() => scroll(1)} className={btnCls}>
+            <ChevronRight className="size-4" />
+          </button>
         </div>
-        <button
-          onClick={() => scroll(1)}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center opacity-60 group-hover/similar:opacity-100 hover:bg-accent hover:border-accent hover:scale-110 active:scale-95 transition-all duration-200 shadow-lg backdrop-blur-sm"
-        >
-          <ChevronRight className="size-4 md:size-5" />
-        </button>
+      </div>
+      <div ref={rowRef} className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+        {similar.map((m, i) => <MediaCard key={m.id} media={m} index={i} />)}
       </div>
     </section>
   )

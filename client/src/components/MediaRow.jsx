@@ -20,6 +20,8 @@ function useFadeIn() {
   return [ref, vis]
 }
 
+const btnCls = "w-8 h-8 rounded-full bg-white/10 border border-white/25 text-white flex items-center justify-center hover:bg-accent hover:border-accent hover:scale-110 active:scale-95 transition-all duration-200 shrink-0"
+
 export default function MediaRow({ title, items, card: CardComponent }) {
   const Card = CardComponent ?? MediaCard
   const rowRef = useRef(null)
@@ -38,20 +40,21 @@ export default function MediaRow({ title, items, card: CardComponent }) {
         transition: 'opacity 0.55s ease, transform 0.55s ease',
       }}
     >
-      <h2 className="font-display text-xl tracking-[0.12em] text-warm/85 uppercase px-4 md:px-10 mb-4">
-        {title}
-      </h2>
+      <div className="flex items-center justify-between px-4 md:px-10 mb-4">
+        <h2 className="font-display text-xl tracking-[0.12em] text-warm/85 uppercase">
+          {title}
+        </h2>
+        <div className="flex gap-2">
+          <button onClick={() => scroll(-1)} className={btnCls}>
+            <ChevronLeft className="size-4" />
+          </button>
+          <button onClick={() => scroll(1)} className={btnCls}>
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
+      </div>
 
-      <div className="relative group/row">
-        {/* Flèche gauche */}
-        <button
-          onClick={() => scroll(-1)}
-          className="absolute left-1 md:left-2 top-[45%] -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center opacity-60 group-hover/row:opacity-100 hover:bg-accent hover:border-accent hover:scale-110 active:scale-95 transition-all duration-200 shadow-lg backdrop-blur-sm"
-        >
-          <ChevronLeft className="size-4 md:size-5" />
-        </button>
-
-        {/* Rangée scrollable */}
+      <div className="relative">
         <div
           ref={rowRef}
           className="flex gap-3 overflow-x-auto no-scrollbar px-4 md:px-10 pb-3"
@@ -60,15 +63,6 @@ export default function MediaRow({ title, items, card: CardComponent }) {
             <Card key={m.id ?? i} media={m} index={i} />
           ))}
         </div>
-
-        {/* Flèche droite */}
-        <button
-          onClick={() => scroll(1)}
-          className="absolute right-1 md:right-2 top-[45%] -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center opacity-60 group-hover/row:opacity-100 hover:bg-accent hover:border-accent hover:scale-110 active:scale-95 transition-all duration-200 shadow-lg backdrop-blur-sm"
-        >
-          <ChevronRight className="size-4 md:size-5" />
-        </button>
-
         {/* Fondus gauche/droite */}
         <div className="absolute left-0 top-0 bottom-3 w-4 md:w-10 bg-gradient-to-r from-surface to-transparent pointer-events-none z-10" />
         <div className="absolute right-0 top-0 bottom-3 w-4 md:w-10 bg-gradient-to-l from-surface to-transparent pointer-events-none z-10" />
