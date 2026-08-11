@@ -26,7 +26,7 @@ const CURRENT_YEAR = new Date().getFullYear()
 const ASIAN_LANGS = new Set(['ja', 'ko', 'zh', 'cn', 'th'])
 
 const CURATED_TOP10 = [
-  { label: "L'Odyssée",                                 test: (t, m) => m.tmdb_id === 1698863 },
+  { label: "L'Odyssée",                                 test: (t, m) => m.tmdb_id === 1368337 },
   { label: 'Spider-Man: Brand New Day',                 test: (t, m) => m.tmdb_id === 969681 },
   { label: 'Obsession',                                 test: (t, m) => m.tmdb_id === 1339713 },
   { label: 'Superman',                                  test: (t, m) => m.tmdb_id === 1061474 },
@@ -123,7 +123,7 @@ function groupByGenre(list) {
 const TMDB_IMG = 'https://image.tmdb.org/t/p'
 
 const HERO_ITEMS = [
-  { image: `${TMDB_IMG}/w500/xBHCRB7zLIW41w8QskfwJhm32YF.jpg`, backdrop: `${TMDB_IMG}/w1280/rOIaKlAX0SeNC25dFbM0y1mFsH6.jpg`, text: "L'Odyssée" },
+  { image: `${TMDB_IMG}/w500/6dfr9o52w9AVYJSlSA1IBUlLCyU.jpg`, backdrop: `${TMDB_IMG}/w1280/RMXG8myu1aGlNUsRjtxzmpdMK0.jpg`, text: "L'Odyssée" },
   { image: `${TMDB_IMG}/w500/tV712n7bMaRuaKyltFl65HPNRiP.jpg`, text: 'Spider-Man : Brand New Day' },
   { image: `${TMDB_IMG}/w500/mDCR1frpUvGfIKksuM440VLb7X9.jpg`, text: 'Obsession' },
   { image: `${TMDB_IMG}/w500/9ZmdDOIbiFCZOvRXBQ7muWUu32l.jpg`, text: 'Sinners' },

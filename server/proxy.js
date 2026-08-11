@@ -4,10 +4,10 @@ const urlCache  = new Map()
 // ── Sources films (6 providers, switchables) ──────────────────────────────────
 
 const MOVIE_SOURCES = (tmdbId) => [
+  `https://frembed.casa/embed/movie/${tmdbId}`,
   `https://vidsrc.to/embed/movie/${tmdbId}`,
   `https://embed.su/embed/movie/${tmdbId}`,
   `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1`,
-  `https://frembed.casa/embed/movie/${tmdbId}`,
   `https://vidsrc.me/embed/movie?tmdb=${tmdbId}`,
   `https://www.2embed.cc/embed/${tmdbId}`,
 ]
