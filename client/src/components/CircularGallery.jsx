@@ -259,7 +259,7 @@ class Media {
 }
 
 class App {
-  constructor(container, { items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase, noScroll, autoSpeed, onCenterChange }) {
+  constructor(container, { items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase, noScroll, noDrag, autoSpeed, onCenterChange }) {
     this.container = container
     this.scrollSpeed = scrollSpeed
     this.autoSpeed = autoSpeed ?? 0
@@ -284,7 +284,7 @@ class App {
       this.scroll.last    = mid
     }
     this.update()
-    this.addEventListeners(noScroll)
+    this.addEventListeners(noScroll, noDrag)
   }
 
   createRenderer() {
@@ -385,18 +385,20 @@ class App {
     this.raf = window.requestAnimationFrame(this.update)
   }
 
-  addEventListeners(noScroll) {
+  addEventListeners(noScroll, noDrag) {
     window.addEventListener('resize', this.onResize)
     if (!noScroll) {
       window.addEventListener('mousewheel', this.onWheel)
       window.addEventListener('wheel', this.onWheel)
     }
-    this.container.addEventListener('mousedown', this.onTouchDown)
-    window.addEventListener('mousemove', this.onTouchMove)
-    window.addEventListener('mouseup', this.onTouchUp)
-    this.container.addEventListener('touchstart', this.onTouchDown)
-    window.addEventListener('touchmove', this.onTouchMove)
-    window.addEventListener('touchend', this.onTouchUp)
+    if (!noDrag) {
+      this.container.addEventListener('mousedown', this.onTouchDown)
+      window.addEventListener('mousemove', this.onTouchMove)
+      window.addEventListener('mouseup', this.onTouchUp)
+      this.container.addEventListener('touchstart', this.onTouchDown)
+      window.addEventListener('touchmove', this.onTouchMove)
+      window.addEventListener('touchend', this.onTouchUp)
+    }
   }
 
   destroy() {
@@ -416,7 +418,7 @@ class App {
   }
 }
 
-export default function CircularGallery({ items, bend = 3, borderRadius = 0.05, scrollSpeed = 2, scrollEase = 0.05, noScroll = false, autoSpeed = 0, onCenterChange, className = '' }) {
+export default function CircularGallery({ items, bend = 3, borderRadius = 0.05, scrollSpeed = 2, scrollEase = 0.05, noScroll = false, noDrag = false, autoSpeed = 0, onCenterChange, className = '' }) {
   const containerRef = useRef(null)
 
   useEffect(() => {
@@ -426,14 +428,14 @@ export default function CircularGallery({ items, bend = 3, borderRadius = 0.05, 
     const color = computedStyle.color || '#ffffff'
     const font = `bold ${computedStyle.fontSize || '30px'} ${computedStyle.fontFamily}`
 
-    const app = new App(el, { items, bend, textColor: color, borderRadius, font, scrollSpeed, scrollEase, noScroll, autoSpeed, onCenterChange })
+    const app = new App(el, { items, bend, textColor: color, borderRadius, font, scrollSpeed, scrollEase, noScroll, noDrag, autoSpeed, onCenterChange })
     return () => app.destroy()
-  }, [items, bend, borderRadius, scrollSpeed, scrollEase, noScroll, autoSpeed, onCenterChange])
+  }, [items, bend, borderRadius, scrollSpeed, scrollEase, noScroll, noDrag, autoSpeed, onCenterChange])
 
   return (
     <div
       ref={containerRef}
-      className={`w-full h-full overflow-hidden cursor-grab active:cursor-grabbing text-warm font-bold text-[30px] ${className}`}
+      className={`w-full h-full overflow-hidden ${noDrag ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'} text-warm font-bold text-[30px] ${className}`}
     />
   )
 }

@@ -19,6 +19,7 @@ export function CoverflowCarousel({
   showCaption = false,
   showPagination = false,
   showNavigation = false,
+  noDrag = false,
   autoAdvanceMs = 0,
   onSlideChange,
   label = 'Cover carousel',
@@ -207,16 +208,16 @@ export function CoverflowCarousel({
       <div className="relative">
         <div
           ref={frameRef}
-          tabIndex={0}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
-          onKeyDown={(event) => {
+          tabIndex={noDrag ? -1 : 0}
+          onPointerDown={noDrag ? undefined : onPointerDown}
+          onPointerMove={noDrag ? undefined : onPointerMove}
+          onPointerUp={noDrag ? undefined : endDrag}
+          onPointerCancel={noDrag ? undefined : endDrag}
+          onKeyDown={noDrag ? undefined : (event) => {
             if (event.key === 'ArrowLeft') { event.preventDefault(); nudge(-1) }
             else if (event.key === 'ArrowRight') { event.preventDefault(); nudge(1) }
           }}
-          className="cursor-grab overflow-hidden py-6 outline-none active:cursor-grabbing"
+          className={cn('overflow-hidden py-6 outline-none', noDrag ? 'cursor-default' : 'cursor-grab active:cursor-grabbing')}
           style={{
             perspective: `calc(var(--cf-card) * ${perspective})`,
             touchAction: 'pan-y',

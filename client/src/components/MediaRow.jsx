@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import MediaCard from './MediaCard'
 
 function useFadeIn() {
@@ -45,9 +46,9 @@ export default function MediaRow({ title, items, card: CardComponent }) {
         {/* Flèche gauche */}
         <button
           onClick={() => scroll(-1)}
-          className="absolute left-3 top-[45%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm text-xl leading-none hidden md:flex items-center justify-center opacity-0 group-hover/row:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent hover:scale-105 transition-all duration-200 shadow-lg"
+          className="absolute left-3 top-[45%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm hidden md:flex items-center justify-center opacity-0 group-hover/row:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent hover:scale-105 transition-all duration-200 shadow-lg"
         >
-          ‹
+          <ChevronLeft className="size-5" />
         </button>
 
         {/* Rangée scrollable */}
@@ -63,9 +64,9 @@ export default function MediaRow({ title, items, card: CardComponent }) {
         {/* Flèche droite */}
         <button
           onClick={() => scroll(1)}
-          className="absolute right-3 top-[45%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm text-xl leading-none hidden md:flex items-center justify-center opacity-0 group-hover/row:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent hover:scale-105 transition-all duration-200 shadow-lg"
+          className="absolute right-3 top-[45%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm hidden md:flex items-center justify-center opacity-0 group-hover/row:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent hover:scale-105 transition-all duration-200 shadow-lg"
         >
-          ›
+          <ChevronRight className="size-5" />
         </button>
 
         {/* Fondus gauche/droite */}

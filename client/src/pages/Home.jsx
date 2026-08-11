@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import CircularGallery from '../components/CircularGallery'
 import { CoverflowCarousel } from '../components/CoverflowCarousel'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -31,8 +32,6 @@ const CURATED_TOP10 = [
   { label: 'Spider-Man: Brand New Day',                 test: (t)    => /brand new day/i.test(t) },
   // Obsession
   { label: 'Obsession',                                 test: (t)    => /^obsession$/i.test(t) },
-  // Alien: Romulus (2024)
-  { label: 'Alien: Romulus',                            test: (t)    => /romulus/i.test(t) },
   // F1 (Brad Pitt, 2025) — tmdb 911430
   { label: 'F1',                                        test: (t, m) => m.tmdb_id === 911430 || (/^f1/i.test(t) && (m.annee_devinee ?? 0) >= 2025) },
   // Mission: Impossible – The Final Reckoning (2025)
@@ -207,6 +206,7 @@ function HeroSection() {
                 gap={0.1}
                 showCaption
                 loop
+                noDrag
                 autoAdvanceMs={10000}
                 onSlideChange={setActiveSlide}
               />
@@ -228,6 +228,7 @@ function HeroSection() {
               scrollSpeed={2}
               scrollEase={0.05}
               noScroll
+              noDrag
               autoSpeed={0.006}
               onCenterChange={setActiveDesktop}
             />
@@ -554,8 +555,8 @@ function SagaGrid({ sagas, collections, onSelect }) {
       <div className="relative group/sagas">
         <button
           onClick={() => scroll(-1)}
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm text-xl flex items-center justify-center opacity-0 group-hover/sagas:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent transition-all duration-200 shadow-lg"
-        >‹</button>
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm flex items-center justify-center opacity-0 group-hover/sagas:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent transition-all duration-200 shadow-lg"
+        ><ChevronLeft className="size-5" /></button>
 
         <div ref={rowRef} className="flex gap-4 overflow-x-auto no-scrollbar px-6 lg:px-10 pb-2">
           {sagas.map((saga) => (
@@ -570,8 +571,8 @@ function SagaGrid({ sagas, collections, onSelect }) {
 
         <button
           onClick={() => scroll(1)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm text-xl flex items-center justify-center opacity-0 group-hover/sagas:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent transition-all duration-200 shadow-lg"
-        >›</button>
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm flex items-center justify-center opacity-0 group-hover/sagas:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent transition-all duration-200 shadow-lg"
+        ><ChevronRight className="size-5" /></button>
 
         <div className="absolute left-0 top-0 bottom-2 w-12 bg-gradient-to-r from-surface to-transparent pointer-events-none z-10" />
         <div className="absolute right-0 top-0 bottom-2 w-12 bg-gradient-to-l from-surface to-transparent pointer-events-none z-10" />
@@ -751,9 +752,9 @@ function Top10ScrollRow({ items }) {
     <div className="relative group/top">
       <button
         onClick={() => scroll(-1)}
-        className="absolute left-3 top-[42%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm text-xl leading-none flex items-center justify-center opacity-0 group-hover/top:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent hover:scale-105 transition-all duration-200 shadow-lg"
+        className="absolute left-3 top-[42%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm flex items-center justify-center opacity-0 group-hover/top:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent hover:scale-105 transition-all duration-200 shadow-lg"
       >
-        ‹
+        <ChevronLeft className="size-5" />
       </button>
 
       <div
@@ -767,9 +768,9 @@ function Top10ScrollRow({ items }) {
 
       <button
         onClick={() => scroll(1)}
-        className="absolute right-3 top-[42%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm text-xl leading-none flex items-center justify-center opacity-0 group-hover/top:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent hover:scale-105 transition-all duration-200 shadow-lg"
+        className="absolute right-3 top-[42%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm flex items-center justify-center opacity-0 group-hover/top:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent hover:scale-105 transition-all duration-200 shadow-lg"
       >
-        ›
+        <ChevronRight className="size-5" />
       </button>
 
       <div className="absolute left-0 top-0 bottom-10 w-10 bg-gradient-to-r from-surface to-transparent pointer-events-none z-10" />
