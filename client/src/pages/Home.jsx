@@ -132,12 +132,12 @@ function groupByGenre(list) {
 const TMDB_IMG = 'https://image.tmdb.org/t/p'
 
 const HERO_ITEMS = [
+  { image: `${TMDB_IMG}/w500/xBHCRB7zLIW41w8QskfwJhm32YF.jpg`, backdrop: `${TMDB_IMG}/w1280/rOIaKlAX0SeNC25dFbM0y1mFsH6.jpg`, text: 'The Odyssey' },
   { image: `${TMDB_IMG}/w500/tV712n7bMaRuaKyltFl65HPNRiP.jpg`, text: 'Spider-Man : Brand New Day' },
   { image: `${TMDB_IMG}/w500/mDCR1frpUvGfIKksuM440VLb7X9.jpg`, text: 'Obsession' },
   { image: `${TMDB_IMG}/w500/9ZmdDOIbiFCZOvRXBQ7muWUu32l.jpg`, text: 'Sinners' },
   { image: `${TMDB_IMG}/w500/lBT9IItBO0yat1I6EBeIbtl4jIA.jpg`, text: 'Kill Bill' },
   { image: `${TMDB_IMG}/w500/up0kyZZlLX24dE9SzDuTjXe6HFl.jpg`, text: 'F1® Le Film' },
-  { image: `${TMDB_IMG}/w500/xBHCRB7zLIW41w8QskfwJhm32YF.jpg`, backdrop: `${TMDB_IMG}/w1280/rOIaKlAX0SeNC25dFbM0y1mFsH6.jpg`, text: 'The Odyssey' },
 ]
 
 const HERO_SLIDES = HERO_ITEMS.map(item => ({ src: item.image, backdrop: item.backdrop ?? item.image, alt: item.text, title: item.text }))
@@ -415,6 +415,13 @@ export default function Home() {
     [allMedia, favIds]
   )
 
+  // La home est une vitrine films : les séries ne doivent apparaître que dans
+  // leurs deux rangées dédiées (et sur la page /series).
+  const movies = useMemo(
+    () => allMedia.filter((m) => m.media_type !== 'tv'),
+    [allMedia]
+  )
+
   if (loading) return <LoadingScreen />
 
   if (!allMedia.length) {
@@ -428,7 +435,7 @@ export default function Home() {
 
   // Mode recherche
   if (query) {
-    const results = allMedia
+    const results = movies
       .filter((m) => {
         const titleHay = `${m.titre_officiel ?? ''} ${m.titre_brut ?? ''}`.toLowerCase()
         const genreHay = (m.genres ?? []).join(' ').toLowerCase()
@@ -439,14 +446,14 @@ export default function Home() {
   }
 
   // Données organisées (mode normal)
-  const curatedTop10  = getCuratedTop10(allMedia)
-  const newReleases   = getNewReleases(allMedia)
-  const groups        = groupByGenre(allMedia)
-  const sagas         = detectSagas(allMedia)
+  const curatedTop10  = getCuratedTop10(movies)
+  const newReleases   = getNewReleases(movies)
+  const groups        = groupByGenre(movies)
+  const sagas         = detectSagas(movies)
   const popularSeries = getPopularSeries(allMedia)
   const recentSeries  = getRecentSeries(allMedia)
   const inProgress    = getInProgress(progressList)
-  const { films: recFilms, genres: recGenres } = getRecommendations(progressList, allMedia)
+  const { films: recFilms, genres: recGenres } = getRecommendations(progressList, movies)
 
   return (
     <main>

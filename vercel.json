@@ -1,0 +1,8 @@
+{
+  "buildCommand": "cd client && npm install && npm run build",
+  "outputDirectory": "client/dist",
+  "installCommand": "echo skip",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://prism-app-production-9c9d.up.railway.app/api/$1" }
+  ]
+}

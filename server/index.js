@@ -1009,6 +1009,13 @@ app.listen(PORT, async () => {
     console.log(`[startup] Catalogue OK — films: ${movieCount}, séries: ${tvCount}`)
   }
 
+  // Import spécifique L'Odyssée de Nolan (tmdb:1698863) — streaming via frembed
+  const odysseeRow = db.prepare('SELECT id FROM media WHERE tmdb_id = 1698863').get()
+  if (!odysseeRow) {
+    console.log("[startup] Import L'Odyssée de Nolan (tmdb:1698863)...")
+    importFromTmdb(db, 1698863, 'movie').catch((err) => console.error("[startup] L'Odyssée:", err.message))
+  }
+
   // Enrichissement TMDB en arrière-plan pour tous les records sans métadonnées
   const { n: pending } = db.prepare(`SELECT COUNT(*) as n FROM media WHERE enriched_at IS NULL`).get()
   if (pending > 0) {
