@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Hls from 'hls.js'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { getMediaDetail, getMedia, saveProgress, img, API } from '../api'
 import MediaCard from '../components/MediaCard'
 import { useFavorites } from '../context/FavoritesContext'
@@ -209,6 +210,9 @@ function usePlaybackProgress(mediaId, initialPosition) {
 // ── Films similaires ──────────────────────────────────────────────────────────
 
 function SimilarFilms({ media, allMedia }) {
+  const rowRef = useRef(null)
+  const scroll = (dir) => rowRef.current?.scrollBy({ left: dir * 700, behavior: 'smooth' })
+
   const similar = useMemo(() => {
     if (!media || !allMedia.length) return []
     const genres = new Set(media.genres ?? [])
@@ -227,8 +231,22 @@ function SimilarFilms({ media, allMedia }) {
   return (
     <section className="mb-20">
       <p className="text-warm/30 text-xs uppercase tracking-widest font-semibold mb-4">Dans le même style</p>
-      <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-        {similar.map((m, i) => <MediaCard key={m.id} media={m} index={i} />)}
+      <div className="relative group/similar">
+        <button
+          onClick={() => scroll(-1)}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center opacity-60 group-hover/similar:opacity-100 hover:bg-accent hover:border-accent hover:scale-110 active:scale-95 transition-all duration-200 shadow-lg backdrop-blur-sm"
+        >
+          <ChevronLeft className="size-4 md:size-5" />
+        </button>
+        <div ref={rowRef} className="flex gap-4 overflow-x-auto no-scrollbar pb-2 px-6">
+          {similar.map((m, i) => <MediaCard key={m.id} media={m} index={i} />)}
+        </div>
+        <button
+          onClick={() => scroll(1)}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center opacity-60 group-hover/similar:opacity-100 hover:bg-accent hover:border-accent hover:scale-110 active:scale-95 transition-all duration-200 shadow-lg backdrop-blur-sm"
+        >
+          <ChevronRight className="size-4 md:size-5" />
+        </button>
       </div>
     </section>
   )

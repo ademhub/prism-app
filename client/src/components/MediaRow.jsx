@@ -46,9 +46,9 @@ export default function MediaRow({ title, items, card: CardComponent }) {
         {/* Flèche gauche */}
         <button
           onClick={() => scroll(-1)}
-          className="absolute left-3 top-[45%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm hidden md:flex items-center justify-center opacity-0 group-hover/row:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent hover:scale-105 transition-all duration-200 shadow-lg"
+          className="absolute left-1 md:left-2 top-[45%] -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center opacity-60 group-hover/row:opacity-100 hover:bg-accent hover:border-accent hover:scale-110 active:scale-95 transition-all duration-200 shadow-lg backdrop-blur-sm"
         >
-          <ChevronLeft className="size-5" />
+          <ChevronLeft className="size-4 md:size-5" />
         </button>
 
         {/* Rangée scrollable */}
@@ -64,9 +64,9 @@ export default function MediaRow({ title, items, card: CardComponent }) {
         {/* Flèche droite */}
         <button
           onClick={() => scroll(1)}
-          className="absolute right-3 top-[45%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-surface/90 border border-white/10 text-warm hidden md:flex items-center justify-center opacity-0 group-hover/row:opacity-100 hover:bg-accent/90 hover:text-surface hover:border-accent hover:scale-105 transition-all duration-200 shadow-lg"
+          className="absolute right-1 md:right-2 top-[45%] -translate-y-1/2 z-20 w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center opacity-60 group-hover/row:opacity-100 hover:bg-accent hover:border-accent hover:scale-110 active:scale-95 transition-all duration-200 shadow-lg backdrop-blur-sm"
         >
-          <ChevronRight className="size-5" />
+          <ChevronRight className="size-4 md:size-5" />
         </button>
 
         {/* Fondus gauche/droite */}
