@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Hls from 'hls.js'
-import { getMediaDetail, getMedia, saveProgress, img } from '../api'
+import { getMediaDetail, getMedia, saveProgress, img, API } from '../api'
 import MediaCard from '../components/MediaCard'
 import { useFavorites } from '../context/FavoritesContext'
 import TrailerModal from '../components/TrailerModal'
@@ -31,7 +31,7 @@ function StreamPlayer({ mediaId, season, episode, backdrop, poster }) {
       if (season)  p.set('season', season)
       if (episode) p.set('episode', episode)
       if (sourceIdx) p.set('sourceIdx', sourceIdx)
-      const res  = await fetch(`/api/stream-url/${mediaId}?${p}`)
+      const res  = await fetch(`${API}/api/stream-url/${mediaId}?${p}`)
       const data = await res.json()
       if (!data.url) throw new Error(data.error ?? 'Stream introuvable')
       setStream(data)

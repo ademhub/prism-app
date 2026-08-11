@@ -5,7 +5,7 @@ import { Send, Search, ArrowLeft, MessageCircle, Radio, Play, Pencil, Trash2, Us
 import { Link } from 'react-router-dom'
 import Hls from 'hls.js'
 import { useAuth } from '../context/AuthContext'
-import { getFriends, getConversation, sendMessage, getConversations, deleteMessage, editMessage, deleteFriendship } from '../api'
+import { getFriends, getConversation, sendMessage, getConversations, deleteMessage, editMessage, deleteFriendship, API } from '../api'
 
 // ── Avatar ────────────────────────────────────────────────────────────────────
 
@@ -140,7 +140,7 @@ function LiveChannelModal({ channel, onClose }) {
   const hlsRef   = useRef(null)
 
   useEffect(() => {
-    fetch(`/api/live-resolve?url=${encodeURIComponent(channel.url)}`)
+    fetch(`${API}/api/live-resolve?url=${encodeURIComponent(channel.url)}`)
       .then((r) => r.json())
       .then((d) => {
         if (d.stream) setStreamUrl(`/api/hls-proxy?url=${encodeURIComponent(d.stream)}`)
@@ -352,7 +352,7 @@ export default function Messages() {
   }
 
   function lastMsgPreview(raw) {
-    try { const p = JSON.parse(raw); if (p?.type === 'share') return `🎬 ${p.title || p.name}` } catch {}
+    try { const p = JSON.parse(raw); if (p?.type === 'share') return `[Film] ${p.title || p.name}` } catch {}
     return raw
   }
 

@@ -16,10 +16,9 @@ import { initCollectionsSchema, getCollections, fetchAndStoreLogos } from './col
 import { fetchTvSaisonsAndStore } from './tmdb.js'
 
 const app = express()
-const PORT = process.env.PORT || 3001
-const DB_PATH      = process.env.DB_PATH      || path.join(__dirname, 'movy.db')
-const UPLOADS_DIR  = process.env.UPLOADS_PATH || path.join(__dirname, 'uploads')
-const db = new Database(DB_PATH)
+const PORT        = process.env.PORT         || 3001
+const UPLOADS_DIR = process.env.UPLOADS_PATH || path.join(__dirname, 'uploads')
+const db = new Database(process.env.DB_PATH  || 'movy.db')
 
 db.pragma('journal_mode = WAL')
 db.pragma('cache_size = -32000')
@@ -111,6 +110,24 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_friend_requester ON friendships(requester_id);
   CREATE INDEX IF NOT EXISTS idx_friend_addressee ON friendships(addressee_id);
 `)
+
+app.use((req, res, next) => {
+  const allowed = [
+    'https://client-two-nu-94.vercel.app',
+    'https://prism-three-ashen.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3000',
+  ]
+  const origin = req.headers.origin
+  if (origin && allowed.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin)
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    res.setHeader('Access-Control-Allow-Credentials', 'true')
+  }
+  if (req.method === 'OPTIONS') return res.sendStatus(204)
+  next()
+})
 
 app.use(express.json())
 app.use('/uploads', express.static(UPLOADS_DIR))
@@ -953,16 +970,8 @@ app.post('/api/notifications/read', (req, res) => {
   res.json({ ok: true })
 })
 
-// ─── Serve client (production) ───────────────────────────────────────────────
-
-const clientDist = path.join(__dirname, '..', 'client', 'dist')
-if (fs.existsSync(clientDist)) {
-  app.use(express.static(clientDist))
-  app.get('*', (req, res) => res.sendFile(path.join(clientDist, 'index.html')))
-}
-
-app.listen(PORT, async () => {
-  console.log(`Server running on http://localhost:${PORT}`)
+app.listen(PORT, '0.0.0.0', async () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`)
 
   // Précharge les chaînes françaises + catalogue iptv-org en arrière-plan
   prefetchFrance().catch(() => {})

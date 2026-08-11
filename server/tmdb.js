@@ -52,10 +52,10 @@ export function initTmdbSchema(db) {
     ['media_type',      'TEXT'],
     ['watch_providers', 'TEXT'],
     ['saisons',         'TEXT'],
-    ['is_adult',           'INTEGER'],
-    ['collection_id',      'INTEGER'],
-    ['collection_name',    'TEXT'],
-    ['original_language',  'TEXT'],
+    ['is_adult',          'INTEGER'],
+    ['collection_id',     'INTEGER'],
+    ['collection_name',   'TEXT'],
+    ['original_language', 'TEXT'],
   ]
 
   const existing = new Set(
@@ -248,6 +248,7 @@ async function enrichOneById(db, row, stmts, skipSaisons = false) {
       watch_providers:   parseWatchProviders(watchData),
       saisons:           saisons ? JSON.stringify(saisons) : null,
       original_language: details.original_language ?? null,
+      is_adult:          details.adult ? 1 : 0,
     })
 
     stmts.deleteCast.run(row.id)

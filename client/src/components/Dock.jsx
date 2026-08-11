@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue } from 'framer-motion'
 import {
   Home, Search, LayoutGrid, Compass, Shuffle,
   LogIn, LogOut, User, Settings, Users, Tv, Radio, MessageCircle, UserPlus, Film,
@@ -28,7 +28,7 @@ function DockBtn({ children, label, active, onClick, className = '' }) {
       <motion.button
         onClick={onClick}
         whileTap={{ scale: 0.94 }}
-        className={`w-12 h-12 md:w-10 md:h-10 flex items-center justify-center rounded-xl outline-none shrink-0 cursor-pointer transition-colors duration-150 ${
+        className={`w-9 h-9 md:w-8 md:h-8 flex items-center justify-center rounded-lg outline-none shrink-0 cursor-pointer transition-colors duration-150 ${
           active
             ? 'bg-white/15 text-accent'
             : 'text-warm/55 hover:bg-white/8 hover:text-warm'
@@ -102,6 +102,56 @@ export default function Dock() {
     const interval = setInterval(load, 30000)
     return () => clearInterval(interval)
   }, [socialId])
+
+  // Taille du dock pilotee au pixel pres par le scroll
+  const dockScale = useMotionValue(1.1)
+  useEffect(() => {
+    const MIN = 0.88
+    const MAX = 1.1
+    const UP_RANGE = 65       // remonter : tres reactif au doigt
+    const DOWN_RANGE = 130     // descendre : plus progressif
+    const EASE_UP = 0.34       // agrandissement rapide mais lisse
+    const EASE_DOWN = 0.18    // retrecissement tres doux
+    const FRAME = 1000 / 60
+    let lastY = window.scrollY
+    let target = MAX
+    let current = dockScale.get()
+    let prevT = 0
+    let raf = 0
+    const tick = (now) => {
+      const dt = prevT ? Math.min(64, now - prevT) : FRAME
+      prevT = now
+      const diff = target - current
+      if (Math.abs(diff) < 0.00015) {
+        current = target
+        dockScale.set(current)
+        prevT = 0
+        raf = 0
+        return
+      }
+      // lissage independant du taux de rafraichissement (60, 90, 120 Hz)
+      const ease = diff > 0 ? EASE_UP : EASE_DOWN
+      current += diff * (1 - Math.pow(1 - ease, dt / FRAME))
+      dockScale.set(current)
+      raf = requestAnimationFrame(tick)
+    }
+    const onScroll = () => {
+      if (searchOpen) return
+      const y = window.scrollY
+      const delta = y - lastY
+      lastY = y
+      if (!delta) return
+      const range = delta < 0 ? UP_RANGE : DOWN_RANGE
+      target = Math.min(MAX, Math.max(MIN, target - (delta / range) * (MAX - MIN)))
+      if (!raf) raf = requestAnimationFrame(tick)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    if (searchOpen && current !== MAX) raf = requestAnimationFrame(tick)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [dockScale, searchOpen])
 
   const closeAll   = useCallback(() => { setSearchOpen(false); setCatsOpen(false); setRandomOpen(false); setProfileOpen(false) }, [])
   const openSearch = useCallback(() => { setSearchOpen(true);  setCatsOpen(false); setRandomOpen(false); setProfileOpen(false) }, [])
@@ -220,8 +270,11 @@ export default function Dock() {
       </AnimatePresence>
 
       {/* ── Dock ─────────────────────────────────────────────────────────── */}
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[300]">
-        <div className="flex items-center gap-1 p-2.5 md:p-2.5 px-3.5 md:px-2.5 rounded-2xl backdrop-blur-xl border border-white/10 bg-surface/80 shadow-[0_8px_40px_rgba(0,0,0,0.6)]">
+      <motion.div
+        className="fixed bottom-4 left-1/2 z-[300] origin-bottom will-change-transform transform-gpu backface-hidden"
+        style={{ x: '-50%', scale: dockScale }}
+      >
+        <div className="flex items-center gap-0.5 p-1.5 px-2 rounded-xl border border-white/10 bg-surface/90 shadow-[0_6px_20px_rgba(0,0,0,0.5)]">
           <DockBtn label="Accueil" active={activeHome} onClick={handleHome}>
             <Home size={16} />
           </DockBtn>
@@ -377,7 +430,7 @@ export default function Dock() {
             </motion.button>
           )}
         </div>
-      </div>
+      </motion.div>
     </>
   )
 }
